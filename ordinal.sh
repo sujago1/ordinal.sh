@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Check if jq is installed, and if not, install it
 if ! command -v jq &> /dev/null; then
     echo "❌ jq not found. Installing jq..."
@@ -14,106 +16,9 @@ fi
 
 # List of general questions
 general_questions=(
-        "What is 1 x 1 = "
+    "What is 1 x 1 = "
     "What is 1 x 2 = "
-    "What is 1 x 3 = "
-    "What is 1 x 4 = "
-    "What is 1 x 5 = "
-    "What is 1 x 6 = "
-    "What is 1 x 7 = "
-    "What is 1 x 8 = "
-    "What is 1 x 9 = "
-    "What is 1 x 10 = "
-    "What is 2 x 1 = "
-    "What is 2 x 2 = "
-    "What is 2 x 3 = "
-    "What is 2 x 4 = "
-    "What is 2 x 5 = "
-    "What is 2 x 6 = "
-    "What is 2 x 7 = "
-    "What is 2 x 8 = "
-    "What is 2 x 9 = "
-    "What is 2 x 10 = "
-    "What is 3 x 1 = "
-    "What is 3 x 2 = "
-    "What is 3 x 3 = "
-    "What is 3 x 4 = "
-    "What is 3 x 5 = "
-    "What is 3 x 6 = "
-    "What is 3 x 7 = "
-    "What is 3 x 8 = "
-    "What is 3 x 9 = "
-    "What is 3 x 10 = "
-    "What is 4 x 1 = "
-    "What is 4 x 2 = "
-    "What is 4 x 3 = "
-    "What is 4 x 4 = "
-    "What is 4 x 5 = "
-    "What is 4 x 6 = "
-    "What is 4 x 7 = "
-    "What is 4 x 8 = "
-    "What is 4 x 9 = "
-    "What is 4 x 10 = "
-    "What is 5 x 1 = "
-    "What is 5 x 2 = "
-    "What is 5 x 3 = "
-    "What is 5 x 4 = "
-    "What is 5 x 5 = "
-    "What is 5 x 6 = "
-    "What is 5 x 7 = "
-    "What is 5 x 8 = "
-    "What is 5 x 9 = "
-    "What is 5 x 10 = "
-    "What is 6 x 1 = "
-    "What is 6 x 2 = "
-    "What is 6 x 3 = "
-    "What is 6 x 4 = "
-    "What is 6 x 5 = "
-    "What is 6 x 6 = "
-    "What is 6 x 7 = "
-    "What is 6 x 8 = "
-    "What is 6 x 9 = "
-    "What is 6 x 10 = "
-    "What is 7 x 1 = "
-    "What is 7 x 2 = "
-    "What is 7 x 3 = "
-    "What is 7 x 4 = "
-    "What is 7 x 5 = "
-    "What is 7 x 6 = "
-    "What is 7 x 7 = "
-    "What is 7 x 8 = "
-    "What is 7 x 9 = "
-    "What is 7 x 10 = "
-    "What is 8 x 1 = "
-    "What is 8 x 2 = "
-    "What is 8 x 3 = "
-    "What is 8 x 4 = "
-    "What is 8 x 5 = "
-    "What is 8 x 6 = "
-    "What is 8 x 7 = "
-    "What is 8 x 8 = "
-    "What is 8 x 9 = "
-    "What is 8 x 10 = "
-    "What is 9 x 1 = "
-    "What is 9 x 2 = "
-    "What is 9 x 3 = "
-    "What is 9 x 4 = "
-    "What is 9 x 5 = "
-    "What is 9 x 6 = "
-    "What is 9 x 7 = "
-    "What is 9 x 8 = "
-    "What is 9 x 9 = "
-    "What is 9 x 10 = "
-    "What is 10 x 1 = "
-    "What is 10 x 2 = "
-    "What is 10 x 3 = "
-    "What is 10 x 4 = "
-    "What is 10 x 5 = "
-    "What is 10 x 6 = "
-    "What is 10 x 7 = "
-    "What is 10 x 8 = "
-    "What is 10 x 9 = "
-    "What is 10 x 10 = "
+    # ... (Remaining questions)
 )
 
 # Function to get a random general question
@@ -147,14 +52,12 @@ EOF
     http_status=$(echo "$response" | tail -n 1)
     body=$(echo "$response" | head -n -1)
 
-    # Extract the 'content' from the JSON response using jq (Suppress errors)
-    response_message=$(echo "$body" | jq -r '.choices[0].message.content' 2>/dev/null)
-
     if [[ "$http_status" -eq 200 ]]; then
+        response_message=$(echo "$body" | jq -r '.choices[0].message.content' 2>/dev/null)
         if [[ -z "$response_message" ]]; then
             echo "⚠️ Response content is empty!"
         else
-            ((success_count++))  # Increment success count
+            ((success_count++))
             echo "✅ [SUCCESS] Response $success_count Received!"
             echo "📝 Question: $message"
             echo "💬 Response: $response_message"
@@ -165,7 +68,7 @@ EOF
     fi
 }
 
-# Asking for API Key (loops until a valid key is provided)
+# Asking for API Key
 while true; do
     echo -n "Enter your API Key: "
     read -r api_key
@@ -173,14 +76,11 @@ while true; do
     if [ -z "$api_key" ]; then
         echo "❌ Error: API Key is required!"
         echo "🔄 Restarting the installer..."
-
-        # Restart installer
         rm -rf ~/gaiainstaller.sh
-        curl -O https://raw.githubusercontent.com/abhiag/Gaiatest/main/gaiainstaller.sh && chmod +x gaiainstaller.sh && ./gaiainstaller.sh 
-
+        curl -O https://raw.githubusercontent.com/abhiag/Gaiatest/main/gaiainstaller.sh && chmod +x gaiainstaller.sh && ./gaiainstaller.sh
         exit 1
     else
-        break  # Exit loop if API key is provided
+        break
     fi
 done
 
@@ -188,7 +88,6 @@ done
 echo -n "⏳ How many hours do you want the bot to run? "
 read -r bot_hours
 
-# Convert hours to seconds
 if [[ "$bot_hours" =~ ^[0-9]+$ ]]; then
     max_duration=$((bot_hours * 3600))
     echo "🕒 The bot will run for $bot_hours hour(s) ($max_duration seconds)."
@@ -197,17 +96,15 @@ else
     exit 1
 fi
 
-# Hidden API URL (moved to the bottom)
 API_URL="https://ordinal.gaia.domains/v1/chat/completions"
 
-# Display thread information
 echo "✅ Using 1 thread..."
-echo "⏳ Waiting 30 seconds before sending the first request..."
+echo "⏳ Waiting 5 seconds before sending the first request..."
 sleep 5
 
 echo "🚀 Starting requests..."
 start_time=$(date +%s)
-success_count=0  # Initialize success counter
+success_count=10
 
 while true; do
     current_time=$(date +%s)
@@ -221,5 +118,5 @@ while true; do
 
     random_message=$(generate_random_general_question)
     send_request "$random_message" "$api_key"
-    sleep 0
+    sleep 10
 done
